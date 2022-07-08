@@ -39,5 +39,6 @@ namespace Employees.WebAPI.Middleware
                 await context.Response.WriteAsync("Something went wrong");
             }
         }
+
     }
 }

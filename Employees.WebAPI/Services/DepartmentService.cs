@@ -29,6 +29,12 @@ namespace Employees.WebAPI.Services
             {
                 throw new NotFoundException("Department not found");
             }
+            var employeesWithDepartment = _context.Employees.FirstOrDefault(e => e.Id == id);
+
+            if (employeesWithDepartment != null)
+            {
+                throw new BadRequestException("There are still employees assigned to this department");
+            }
 
             _context.Departments.Remove(department);
             _context.SaveChanges();
