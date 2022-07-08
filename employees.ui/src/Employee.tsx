@@ -32,6 +32,19 @@ export class Employee extends Component<any, any>{
             });
     }
 
+    sortResult(prop, asc) {
+        var sortedData = this.state.employees.sort(function (a, b) {
+            if (asc) {
+                return (a[prop] > b[prop]) ? 1 : ((a[prop] < b[prop]) ? -1 : 0)
+            }
+            else {
+                return (b[prop] > a[prop]) ? 1 : ((b[prop] < a[prop]) ? -1 : 0)
+            }
+        });
+
+        this.setState({ employees: sortedData });
+    }
+
     componentDidMount() {
         this.refreshList();
     }
@@ -65,12 +78,14 @@ export class Employee extends Component<any, any>{
     }
 
     editClick(emp) {
+
+
         this.setState({
             modalTitle: "Edit Employee",
             EmployeeId: emp.Id,
             EmployeeName: emp.Name,
             Department: emp.Department,
-            DateOfJoining: emp.DateOfJoining,
+            DateOfJoining: (emp.DateOfJoining).toString().slice(0,10),
             PhotoFileName: emp.PhotoFileName,
         })
     }
@@ -126,6 +141,22 @@ export class Employee extends Component<any, any>{
         }
     }
 
+    imageUpload = (e) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+        formData.append("file", e.target.files[0], e.target.files[0].name);
+
+        fetch(variables.API_URL + 'employee/savefile', {
+            method: 'POST',
+            body: formData
+        })
+            .then(res => res.json())
+            .then(data => {
+                this.setState({ PhotoFileName: data });
+            })
+    }
+
     render() {
         const {
             departments,
@@ -136,8 +167,10 @@ export class Employee extends Component<any, any>{
             Department,
             DateOfJoining,
             PhotoFileName,
-            PhotoPath
+            PhotoPath,
         } = this.state;
+
+
 
         return (
             <div>
@@ -146,16 +179,68 @@ export class Employee extends Component<any, any>{
                     <thead>
                         <tr>
                             <th>
+                                <div className="d-flex">
+                                    <button type="button" className="btn btn-light" onClick={() => this.sortResult('Id', true)}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                                            <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                                        </svg>
+                                    </button>
+                                    <button type="button" className="btn btn-light" onClick={() => this.sortResult('Id', false)}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-caret-up-fill" viewBox="0 0 16 16">
+                                            <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" />
+                                        </svg>
+                                    </button>
+
+                                </div>
                                 EmployeeId
                             </th>
                             <th>
+                                <div className="d-flex">
+                                    <button type="button" className="btn btn-light" onClick={() => this.sortResult('Name', true)}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                                            <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                                        </svg>
+                                    </button>
+                                    <button type="button" className="btn btn-light" onClick={() => this.sortResult('Name', false)}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-caret-up-fill" viewBox="0 0 16 16">
+                                            <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" />
+                                        </svg>
+                                    </button>
+
+                                </div>
                                 EmployeeName
                             </th>
                             <th>
+                                <div className="d-flex">
+                                    <button type="button" className="btn btn-light" onClick={() => this.sortResult('Department', true)}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                                            <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                                        </svg>
+                                    </button>
+                                    <button type="button" className="btn btn-light" onClick={() => this.sortResult('Department', false)}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-caret-up-fill" viewBox="0 0 16 16">
+                                            <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" />
+                                        </svg>
+                                    </button>
+
+                                </div>
                                 Department
                             </th>
                             <th>
-                                DOJ
+                                <div className="d-flex">
+                                    <button type="button" className="btn btn-light" onClick={() => this.sortResult('DateOfJoining', true)}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                                            <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                                        </svg>
+                                    </button>
+                                    <button type="button" className="btn btn-light" onClick={() => this.sortResult('DateOfJoining', false)}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-caret-up-fill" viewBox="0 0 16 16">
+                                            <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" />
+                                        </svg>
+                                    </button>
+
+                                </div>
+                                DateOfJoining
                             </th>
                             <th>
                                 Options
@@ -168,7 +253,7 @@ export class Employee extends Component<any, any>{
                                 <td>{emp.Id}</td>
                                 <td>{emp.Name}</td>
                                 <td>{emp.Department}</td>
-                                <td>{emp.DateOfJoin}</td>
+                                <td>{new Date(emp.DateOfJoining).toLocaleDateString()}</td>
                                 <td>
                                     <button type="button" className="btn btn-light -mr-1" data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={() => this.editClick(emp)}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-pencil-square" viewBox="0 0 16 16">
@@ -207,27 +292,26 @@ export class Employee extends Component<any, any>{
                                         <div className="input-group mb-3">
                                             <span className="input-group-text">Department</span>
                                             <select className="form-select" onChange={this.changeDepartment} value={Department}>
-                                                {departments.map(dep => <option key={dep.Id }>
+                                                {departments.map(dep => <option key={dep.Id}>
                                                     {dep.Name}
-                                                    </option>)}
+                                                </option>)}
                                             </select>
                                         </div>
                                         <div className="input-group mb-3">
-                                            <span className="input-group-text">DOJ</span>
-                                            <input type="text" className="form-control" value={DateOfJoining} onChange={this.changeDateOfJoining} />
+                                            <span className="input-group-text">DateOfJoining</span>
+                                            <input type="date" className="form-control" value={ DateOfJoining } onChange={this.changeDateOfJoining} />
                                         </div>
                                     </div>
                                     <div className="p-2 w-50 bd-highlight">
-                                        <img width="250px" height="250px" src={PhotoPath + '/' + PhotoFileName}/>
+                                        <img width="250px" height="250px" alt="avatar" src={PhotoPath + '/' + PhotoFileName} />
+                                        <input className= "m-2" type="file" onChange={this.imageUpload}/>
                                     </div>
 
-
-                                    {EmployeeId == 0 ? <button type="button" className="btn btn-primary float-start" onClick={() => this.createClick()}>Create</button> : null}
-
-                                    {EmployeeId != 0 ? <button type="button" className="btn btn-primary float-start" onClick={() => this.updateClick(EmployeeId)}>Update</button> : null}
-                                    <button type="button" className="btn btn-secondary float-end" data-bs-dismiss="modal" aria-label="Close">Back</button>
-
                                 </div>
+                                {EmployeeId === 0 ? <button type="button" className="btn btn-primary float-start" onClick={() => this.createClick()}>Create</button> : null}
+
+                                {EmployeeId !== 0 ? <button type="button" className="btn btn-primary float-start" onClick={() => this.updateClick(EmployeeId)}>Update</button> : null}
+                                <button type="button" className="btn btn-secondary float-end" data-bs-dismiss="modal" aria-label="Close">Back</button>
 
                             </div>
                         </div>

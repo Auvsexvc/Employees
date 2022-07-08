@@ -9,15 +9,60 @@ export class Department extends Component<any, any>{
             departments: [],
             modalTitle: "",
             DepartmentName: "",
-            DepartmentId: 0
+            DepartmentId: 0,
+
+            DepartmentIdFilter: "",
+            DepartmentNameFilter: "",
+            departmentsWithoutFilter: []
         }
+    }
+
+    FilterFn() {
+        var DepartmentIdFilter = this.state.DepartmentIdFilter;
+        var DepartmentNameFilter = this.state.DepartmentNameFilter;
+
+        var filteredData = this.state.departmentsWithoutFilter.filter(
+            function (el) {
+                return el.Id.toString().toLowerCase().includes(
+                    DepartmentIdFilter.toString().trim().toLowerCase()
+                ) &&
+                el.Name.toString().toLowerCase().includes(
+                    DepartmentNameFilter.toString().trim().toLowerCase()
+                )
+            }
+        );
+
+        this.setState({ departments: filteredData })
+    }
+
+    changeDepartmentIdFilter = (e)=>{
+        this.setState({DepartmentIdFilter: e.target.value });
+        this.FilterFn();
+    }
+
+    changeDepartmentNameFilter = (e) => {
+        this.setState({ DepartmentNameFilter: e.target.value });
+        this.FilterFn();
+    }
+
+    sortResult(prop, asc) {
+        var sortedData = this.state.departmentsWithoutFilter.sort(function (a, b) {
+            if (asc) {
+                return (a[prop] > b[prop]) ? 1 : ((a[prop] < b[prop]) ? -1 : 0)
+            }
+            else {
+                return (b[prop] > a[prop]) ? 1 : ((b[prop] < a[prop]) ? -1 : 0)
+            }
+        });
+
+        this.setState({ departments: sortedData });
     }
 
     refreshList() {
         fetch(variables.API_URL + 'department')
             .then(response => response.json())
             .then(data => {
-                this.setState({ departments: data });
+                this.setState({ departments: data, departmentsWithoutFilter: data });
             });
     }
 
@@ -87,8 +132,8 @@ export class Department extends Component<any, any>{
                     'Content-Type': 'application/json'
                 }
             })
-            .then(res => res.json())
-            .then(result => this.refreshList())
+                .then(res => res.json())
+                .then(result => this.refreshList())
         }
     }
 
@@ -97,7 +142,7 @@ export class Department extends Component<any, any>{
             departments,
             modalTitle,
             DepartmentId,
-            DepartmentName
+            DepartmentName,
         } = this.state;
 
         return (
@@ -107,9 +152,35 @@ export class Department extends Component<any, any>{
                     <thead>
                         <tr>
                             <th>
+                                <div className="d-flex">
+                                    <input className="form-control m-2" onChange={this.changeDepartmentIdFilter} placeholder="Filter" />
+                                    <button type="button" className="btn btn-light" onClick={() => this.sortResult('Id', true)}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                                            <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                                        </svg>
+                                    </button>
+                                    <button type="button" className="btn btn-light" onClick={() => this.sortResult('Id', false)}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-caret-up-fill" viewBox="0 0 16 16">
+                                            <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" />
+                                        </svg>
+                                    </button>
+
+                                </div>
                                 DepartmentId
                             </th>
-                            <th>
+                            <th><div className="d-flex">
+                                <input className="form-control m-2" onChange={this.changeDepartmentNameFilter} placeholder="Filter" />
+                                <button type="button" className="btn btn-light" onClick={() => this.sortResult('Name', true)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                                        <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                                    </svg>
+                                </button>
+                                <button type="button" className="btn btn-light" onClick={() => this.sortResult('Name', false)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-caret-up-fill" viewBox="0 0 16 16">
+                                        <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" />
+                                    </svg>
+                                </button>
+                                </div>
                                 DepartmentName
                             </th>
                         </tr>
@@ -127,7 +198,7 @@ export class Department extends Component<any, any>{
                                         </svg>
                                     </button>
 
-                                    <button type="button" className="btn btn-light -mr-1" onClick={() => this.deleteClick(dep.Id) }>
+                                    <button type="button" className="btn btn-light -mr-1" onClick={() => this.deleteClick(dep.Id)}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash-fill" viewBox="0 0 16 16">
                                             <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
                                         </svg>
