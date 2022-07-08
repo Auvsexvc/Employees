@@ -35,14 +35,14 @@ export class Department extends Component<any, any>{
         this.setState({ departments: filteredData })
     }
 
-    changeDepartmentIdFilter = (e)=>{
-        this.setState({DepartmentIdFilter: e.target.value });
-        this.FilterFn();
+    changeDepartmentIdFilter = async (e)=>{
+        await this.setState({DepartmentIdFilter: e.target.value });
+        await this.FilterFn();
     }
 
-    changeDepartmentNameFilter = (e) => {
-        this.setState({ DepartmentNameFilter: e.target.value });
-        this.FilterFn();
+    changeDepartmentNameFilter = async (e) => {
+        await this.setState({ DepartmentNameFilter: e.target.value });
+        await this.FilterFn();
     }
 
     sortResult(prop, asc) {
