@@ -1,4 +1,5 @@
 ﻿using Employees.WebAPI.Entities;
+using Employees.WebAPI.Exceptions;
 using Employees.WebAPI.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,54 +14,57 @@ namespace Employees.WebAPI.Services
             _context = employeeDbContext;
         }
 
-        public bool Create(Employee employee)
+        public int Create(Employee employee)
         {
-            if (_context.Employees == null)
-            {
-                return false;
-            }
             _context.Employees.Add(employee);
             _context.SaveChanges();
-            return true;
+
+            return employee.Id;
         }
 
-        public bool Delete(int id)
+        public void Delete(int id)
         {
             var employee = GetById(id);
-            if (employee != null && _context.Employees != null)
+
+            if (employee is null)
             {
-                _context.Employees.Remove(employee);
-                _context.SaveChanges();
-                return true;
+                throw new NotFoundException("Employee not found");
             }
-            return false;
+
+            _context.Employees.Remove(employee);
+            _context.SaveChanges();
         }
 
         public IEnumerable<Employee>? GetAll()
         {
-            return _context.Employees?.ToList();
+            return _context.Employees.ToList();
         }
 
-        public Employee? GetById(int id)
+        public Employee GetById(int id)
         {
-            return _context.Employees?.Find(id);
-        }
 
-        public bool Update(int id, Employee employee)
-        {
-            if (_context.Employees != null && EmployeeExists(employee.Id) && employee.Id == id)
+            var employee = _context.Employees.Find(id);
+            if (employee is null)
             {
-                _context.Entry(employee).State = EntityState.Modified;
-                _context.SaveChanges();
-                return true;
+                throw new NotFoundException("Employee not found");
             }
 
-            return false;
+            return employee;
         }
 
-        private bool EmployeeExists(int id)
+        public void Update(int id, Employee employee)
         {
-            return (_context.Employees?.Any(e => e.Id == id)).GetValueOrDefault();
+            var employeeDb = _context.Employees.Find(id);
+            if (employeeDb is null)
+            {
+                throw new NotFoundException("Employee not found");
+            }
+
+            employeeDb.Name = employee.Name;
+            employeeDb.Department = employee.Department;
+            employeeDb.DateOfJoining = employee.DateOfJoining;
+            employeeDb.PhotoFileName = employee.PhotoFileName;
+            _context.SaveChanges();
         }
     }
 }

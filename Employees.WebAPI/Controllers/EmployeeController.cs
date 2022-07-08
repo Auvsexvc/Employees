@@ -21,33 +21,41 @@ namespace Employees.WebAPI.Controllers
         public IActionResult DeleteEmployee(int id)
         {
             var employee = _employeeService.GetById(id);
-            return _employeeService.Delete(id) ? Ok(employee) : NotFound();
+            _employeeService.Delete(id);
+
+            return Ok(employee);
         }
 
         [HttpGet("{id}")]
         public ActionResult<Employee> GetEmployee(int id)
         {
             var employee = _employeeService.GetById(id);
-            return employee == null ? NotFound() : Ok(employee);
+
+            return Ok(employee);
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<Employee>> GetEmployees()
         {
             var employees = _employeeService.GetAll();
-            return employees != null ? Ok(employees) : NoContent();
+
+            return Ok(employees);
         }
 
         [HttpPost]
         public ActionResult<Employee> PostEmployee(Employee employee)
         {
-            return _employeeService.Create(employee) ? CreatedAtAction("GetEmployee", new { id = employee.Id }, employee) : StatusCode(500);
+            int newId = _employeeService.Create(employee);
+
+            return CreatedAtAction("GetEmployee", new { id = newId }, employee);
         }
 
         [HttpPut("{id}")]
         public IActionResult PutEmployee(int id, Employee employee)
         {
-            return _employeeService.Update(id, employee) ? Ok(employee) : NotFound();
+            _employeeService.Update(id, employee);
+
+            return Ok(employee);
         }
 
         [Route("SaveFile")]

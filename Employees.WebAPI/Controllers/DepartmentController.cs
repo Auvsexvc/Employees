@@ -19,33 +19,41 @@ namespace departments.WebAPI.Controllers
         public IActionResult DeleteDepartment(int id)
         {
             var department = _departmentService.GetById(id);
-            return _departmentService.Delete(id) ? Ok(department) : NotFound();
+            _departmentService.Delete(id);
+
+            return Ok(department);
         }
 
         [HttpGet("{id}")]
         public ActionResult<Department> GetDepartment(int id)
         {
             var department = _departmentService.GetById(id);
-            return department == null ? NotFound() : Ok(department);
+
+            return Ok(department);
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<Department>> GetDepartments()
         {
             var departments = _departmentService.GetAll();
-            return departments != null ? Ok(departments) : NoContent();
+
+            return Ok(departments);
         }
 
         [HttpPost]
         public ActionResult<Department> PostDepartment(Department department)
         {
-            return _departmentService.Create(department) ? CreatedAtAction("GetDepartment", new { id = department.Id }, department) : StatusCode(500);
+            int newId = _departmentService.Create(department);
+
+            return CreatedAtAction("GetDepartment", new { id = newId }, department);
         }
 
         [HttpPut("{id}")]
         public IActionResult PutDepartment(int id, Department department)
         {
-            return _departmentService.Update(id, department) ? Ok(department) : NotFound();
+            _departmentService.Update(id, department);
+
+            return Ok(department);
         }
     }
 }

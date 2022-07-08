@@ -1,6 +1,6 @@
 ﻿using Employees.WebAPI.Entities;
+using Employees.WebAPI.Exceptions;
 using Employees.WebAPI.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace Employees.WebAPI.Services
 {
@@ -12,53 +12,54 @@ namespace Employees.WebAPI.Services
         {
             _context = employeeDbContext;
         }
-        public bool Create(Department department)
-{
-            if (_context.Departments == null)
-            {
-                return false;
-}
+
+        public int Create(Department department)
+        {
             _context.Departments.Add(department);
             _context.SaveChanges();
-            return true;
+
+            return department.Id;
         }
 
-        public bool Delete(int id)
+        public void Delete(int id)
         {
             var department = GetById(id);
-            if (department != null && _context.Departments != null)
+
+            if (department is null)
             {
-                _context.Departments.Remove(department);
-                _context.SaveChanges();
-                return true;
+                throw new NotFoundException("Department not found");
             }
-            return false;
+
+            _context.Departments.Remove(department);
+            _context.SaveChanges();
         }
 
         public IEnumerable<Department>? GetAll()
         {
-            return _context.Departments?.ToList();
+            return _context.Departments.ToList();
         }
 
-        public Department? GetById(int id)
+        public Department GetById(int id)
         {
-            return _context.Departments?.Find(id);
-        }
+            var department = _context.Departments.FirstOrDefault(d => d.Id == id);
 
-        public bool Update(int id, Department department)
-        {
-            if (_context.Departments != null && DepartmentExists(department.Id) && department.Id == id)
+            if (department is null)
             {
-                _context.Entry(department).State = EntityState.Modified;
-                _context.SaveChanges();
-                return true;
+                throw new NotFoundException("Department not found");
             }
 
-            return false;
+            return department;
         }
-        private bool DepartmentExists(int id)
+
+        public void Update(int id, Department department)
         {
-            return (_context.Departments?.Any(e => e.Id == id)).GetValueOrDefault();
+            var departmentDb = _context.Departments.FirstOrDefault(d => d.Id == id);
+            if (departmentDb is null)
+            {
+                throw new NotFoundException("Department not found");
+            }
+            departmentDb.Name = department.Name;
+            _context.SaveChanges();
         }
     }
 }

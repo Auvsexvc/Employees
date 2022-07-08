@@ -4,10 +4,10 @@ namespace Employees.WebAPI.Interfaces
 {
     public interface IDepartmentService
     {
-        bool Update(int id, Department department);
-        bool Create(Department department);
+        void Update(int id, Department department);
+        int Create(Department department);
         IEnumerable<Department>? GetAll();
         Department? GetById(int id);
-        bool Delete(int id);
+        void Delete(int id);
     }
 }
