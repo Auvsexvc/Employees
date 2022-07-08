@@ -308,9 +308,9 @@ export class Employee extends Component<any, any>{
                                     </div>
 
                                 </div>
-                                {EmployeeId === 0 ? <button type="button" className="btn btn-primary float-start" onClick={() => this.createClick()}>Create</button> : null}
+                                {EmployeeId === 0 ? <button type="button" className="btn btn-primary float-start" onClick={() => this.createClick()} data-bs-dismiss="modal">Create</button> : null}
 
-                                {EmployeeId !== 0 ? <button type="button" className="btn btn-primary float-start" onClick={() => this.updateClick(EmployeeId)}>Update</button> : null}
+                                {EmployeeId !== 0 ? <button type="button" className="btn btn-primary float-start" onClick={() => this.updateClick(EmployeeId)} data-bs-dismiss="modal">Update</button> : null}
                                 <button type="button" className="btn btn-secondary float-end" data-bs-dismiss="modal" aria-label="Close">Back</button>
 
                             </div>

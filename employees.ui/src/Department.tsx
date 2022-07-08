@@ -215,7 +215,7 @@ export class Department extends Component<any, any>{
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h5 className="modal-title">{modalTitle}</h5>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Closed">
+                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                 </button>
                             </div>
                             <div className="modal-body">
@@ -224,9 +224,9 @@ export class Department extends Component<any, any>{
                                     <input type="text" className="form-control" value={DepartmentName} onChange={this.changeDepartmentName} />
                                 </div>
 
-                                {DepartmentId == 0 ? <button type="button" className="btn btn-primary float-start" onClick={() => this.createClick()}>Create</button> : null}
+                                {DepartmentId === 0 ? <button type="button" className="btn btn-primary float-start" onClick={() => this.createClick()} data-bs-dismiss="modal">Create</button> : null}
 
-                                {DepartmentId != 0 ? <button type="button" className="btn btn-primary float-start" onClick={() => this.updateClick(DepartmentId)}>Update</button> : null}
+                                {DepartmentId !== 0 ? <button type="button" className="btn btn-primary float-start" onClick={() => this.updateClick(DepartmentId)} data-bs-dismiss="modal">Update</button> : null}
                                 <button type="button" className="btn btn-secondary float-end" data-bs-dismiss="modal" aria-label="Close">Back</button>
                             </div>
                         </div>
